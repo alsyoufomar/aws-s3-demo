@@ -8,8 +8,12 @@ async function postImage({ image, description }) {
   formData.append('demo_file', image)
   formData.append('description', description)
 
-  const result = await axios.post('http://localhost:3000/post_file', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+  const result = await axios.post('http://localhost:4000/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXI1IiwiaWF0IjoxNjc2MjQyMjIwfQ.ZrHxaqgF6pFoQ-eutzSiFlrLq3Cp5DpYnGHdohYt9fA',
+    },
   })
   return result.data
 }
@@ -17,14 +21,13 @@ async function postImage({ image, description }) {
 function Aws() {
   const [file, setFile] = useState()
   const [description, setDescription] = useState('')
-  const [images, setImages] = useState([])
+  const [data, setData] = useState('')
 
   const submit = async (event) => {
     event.preventDefault()
     const result = await postImage({ image: file, description })
-    setImages([result.image, ...images])
+    setData(result.file.profilePicture)
   }
-  console.log(images, 'images')
 
   const fileSelected = (event) => {
     const file = event.target.files[0]
@@ -42,15 +45,7 @@ function Aws() {
         <button type='submit'>Submit</button>
       </form>
 
-      {images.map((image, index) => (
-        <div key={index}>
-          <img src={image} alt={image}></img>
-        </div>
-      ))}
-
-      <img
-        src='http://localhost:3000/get_file/1654630707146.jpg'
-        alt='link'></img>
+      <img src={data} alt='link'></img>
     </div>
   )
 }
